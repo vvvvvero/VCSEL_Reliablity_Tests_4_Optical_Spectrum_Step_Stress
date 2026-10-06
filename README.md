@@ -1,5 +1,14 @@
 # VCSEL Reliability Tests - Series 4: Optical Spectrum Step Stress
 
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**Synchronized Keysight B1500 + Avantes spectrometer step-stress testing with live monitoring and automated data export.**
+
+© Veronica GaoZhan - 2026
+
+---
+
 ## Series Context
 
 This repository is part of the Veronica GaoZhan VCSEL Reliability Test Series.
@@ -10,49 +19,145 @@ This repository is part of the Veronica GaoZhan VCSEL Reliability Test Series.
 - Protocol name: stress_step_spectroscopy
 - Author: Veronica GaoZhan
 
-## Repository Purpose
+---
 
-Series 4 provides optical-spectrum step-stress workflows where stress level is incremented by
-start/stop/step settings. After each stress step, the script performs IV characterization and
-captures spectroscopy data for degradation tracking.
+## Overview
 
-This page and structure are aligned with the LIV step-stress track style.
+Series 4 provides an optical-spectrum step-stress workflow where stress is incremented by
+`start_value`, `stop_value`, and `step_value`. After each stress level, the system runs an IV
+characterization phase and acquires spectroscopy data for degradation tracking.
 
-## Included Scripts
-
-- b1500_stress_cycle_spectroscopy.py: B1500 + Avantes spectrometer step-stress GUI workflow (with legacy cycle-mode fallback).
-
-## Quick Start
-
-```bash
-python b1500_stress_cycle_spectroscopy.py
-```
-
-## Measurement Flow
-
-Step-stress sequence:
+Main flow:
 
 ```text
 Measurement -> Stress(level 1) -> Measurement -> Stress(level 2) -> ...
 ```
 
-- Stress levels are generated from `start_value`, `stop_value`, and `step_value`
-- Each level runs for `duration_s`
-- Stress phase includes monitoring and periodic spectrum acquisition
-- Measurement phase includes IV sweep and end-of-sweep spectroscopy capture
+---
 
-## Standard Session Fields (Series V1)
+## Features
 
-Runs should include these common identifiers in metadata and outputs:
+| Feature | Detail |
+|---------|--------|
+| **Step Stress** | Incremental stress ladder using start/stop/step levels |
+| **IV Characterization** | Point-by-point IV/VI sweep using Keysight B1500 |
+| **Spectroscopy During Stress** | Periodic Avantes spectra at stress integration settings |
+| **Spectroscopy During Measurement** | Spectrum captured in each post-stress measurement phase |
+| **Live GUI** | PyQt5 live plots for IV, stress current, and spectral waterfalls |
+| **CSV Export** | Per-step electrical + spectral files and run summary |
+| **Legacy Compatibility** | Keeps cycle-mode fallback for older scripts |
 
-- project_id
-- wafer_id
-- device_id
-- session_id
-- parent_session_id
-- protocol_name
-- protocol_version
-- schema_version
+---
+
+## Installation
+
+### From Source
+
+```bash
+git clone https://github.com/vvvvvero/VCSEL_Reliablity_Tests_4_Optical_Spectrum_Step_Stress.git
+cd VCSEL_Reliablity_Tests_4_Optical_Spectrum_Step_Stress
+pip install -e .
+```
+
+### Dependencies
+
+- numpy
+- pyvisa
+- pyvisa-py
+- PyQt5
+- matplotlib
+
+Or install directly:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Quick Start
+
+### Package Entry
+
+```bash
+python -m step_stress_spectra
+```
+
+### Console Script Entry
+
+```bash
+step_stress_spectra
+```
+
+### Legacy Script Entry
+
+```bash
+python b1500_stress_cycle_spectroscopy.py
+```
+
+### List Available GPIB Resources
+
+```bash
+python -m step_stress_spectra --list-resources
+```
+
+---
+
+## Python API
+
+```python
+from step_stress_spectra import (
+	CycleConfig,
+	SweepConfig,
+	StressConfig,
+	SpecConfig,
+	StressCycleEngine,
+	B1500Controller,
+	SpectrometerController,
+)
+
+b1500 = B1500Controller()
+spec = SpectrometerController()
+
+cfg = CycleConfig(
+	sweep=SweepConfig(smu=1, mode="iv", start=0.0, stop=2.0, steps=21),
+	stress=StressConfig(
+		mode="voltage",
+		start_value=2.0,
+		stop_value=5.0,
+		step_value=0.5,
+		duration_s=60.0,
+	),
+	spec=SpecConfig(
+		enabled=True,
+		meas_integration_ms=100.0,
+		stress_integration_ms=100.0,
+		stress_interval_ms=1000.0,
+	),
+	use_step_stress=True,
+)
+
+engine = StressCycleEngine(b1500, spec, cfg)
+engine.run()
+```
+
+---
+
+## Package Structure
+
+```text
+VCSEL_Reliablity_Tests_4_Optical_Spectrum_Step_Stress/
+├── b1500_stress_cycle_spectroscopy.py      # Main implementation
+├── step_stress_spectra/
+│   ├── __init__.py                         # Public API exports
+│   └── __main__.py                         # python -m entry point
+├── pyproject.toml
+├── requirements.txt
+├── README.md
+└── LICENSE
+```
+
+---
 
 ## Output Files
 
@@ -67,19 +172,22 @@ Typical outputs per run:
 - spectra_measurement_all.csv
 - spectra_stress_all.csv
 
-## Dependencies
+---
 
-- Python 3.8+
-- numpy
-- matplotlib
-- pyvisa
-- pyqt5
+## Standard Session Fields (Series V1)
 
-Install example:
+Runs should include these common identifiers in metadata and outputs:
 
-```bash
-pip install numpy matplotlib pyvisa pyqt5
-```
+- project_id
+- wafer_id
+- device_id
+- session_id
+- parent_session_id
+- protocol_name
+- protocol_version
+- schema_version
+
+---
 
 ## Related Series Repositories
 
@@ -88,6 +196,8 @@ pip install numpy matplotlib pyvisa pyqt5
 - Series 3 (LIV Stress Recovery): https://github.com/vvvvvero/VCSEL_Reliablity_Tests_3_LIV_Stress_Recovery
 - Series 4 (Optical Spectrum Step Stress): https://github.com/vvvvvero/VCSEL_Reliablity_Tests_4_Optical_Spectrum_Step_Stress
 - Series 5 (Optical Spectrum Constant Stress): https://github.com/vvvvvero/VCSEL_Reliablity_Tests_5_Optical_Spectrum_Constant_Stress
+
+---
 
 ## Citation
 
