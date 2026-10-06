@@ -50,4 +50,4 @@ step_stress_spectra = "step_stress_spectra.__main__:main"
 
 [tool.setuptools]
 packages = ["step_stress_spectra"]
-py-modules = ["b1500_stress_cycle_spectroscopy"]
+py-modules = ["b1500_Step_stress_spectroscopy"]

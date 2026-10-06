@@ -13,7 +13,7 @@ Public API exports from the Series 4 spectroscopy step-stress workflow.
 __version__ = "1.0.0"
 __author__ = "Veronica GaoZhan"
 
-from b1500_stress_cycle_spectroscopy import (
+from b1500_Step_stress_spectroscopy import (
     TestPhase,
     SweepConfig,
     StressConfig,

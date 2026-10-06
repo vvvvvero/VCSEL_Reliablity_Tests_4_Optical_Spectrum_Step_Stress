@@ -92,7 +92,7 @@ step_stress_spectra
 ### Legacy Script Entry
 
 ```bash
-python b1500_stress_cycle_spectroscopy.py
+python b1500_Step_stress_spectroscopy.py
 ```
 
 ### List Available GPIB Resources
@@ -147,7 +147,7 @@ engine.run()
 
 ```text
 VCSEL_Reliablity_Tests_4_Optical_Spectrum_Step_Stress/
-├── b1500_stress_cycle_spectroscopy.py      # Main implementation
+├── b1500_Step_stress_spectroscopy.py       # Main implementation
 ├── step_stress_spectra/
 │   ├── __init__.py                         # Public API exports
 │   └── __main__.py                         # python -m entry point

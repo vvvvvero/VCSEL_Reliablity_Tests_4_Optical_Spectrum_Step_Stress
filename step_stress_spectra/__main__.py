@@ -9,7 +9,7 @@ Usage:
 
 import argparse
 
-from b1500_stress_cycle_spectroscopy import B1500Controller, main as launch_gui
+from b1500_Step_stress_spectroscopy import B1500Controller, main as launch_gui
 
 
 def build_parser() -> argparse.ArgumentParser:
